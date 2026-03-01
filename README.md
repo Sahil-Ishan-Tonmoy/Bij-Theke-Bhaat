@@ -16,4 +16,4 @@ For help getting started with Flutter development, view the
 [online documentation](https://docs.flutter.dev/), which offers tutorials,
 samples, guidance on mobile development, and a full API reference.
 
-
+See [Implementation Details](docs/Implementation_Details.md) for a technical breakdown of how this application functions, including widget structures and programmatic resource utilization.
