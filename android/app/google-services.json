@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "162833217391",
+    "project_id": "bij-theke-bhat",
+    "storage_bucket": "bij-theke-bhat.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:162833217391:android:e3738c4507f16a1e531a9a",
+        "android_client_info": {
+          "package_name": "com.sit.bij_theke_bhat"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "162833217391-mvg4h8bvmmfupg123pl137g0mv2st0ud.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDaF8nu_euWap1xIUIkS4xwFaMcCKxhdLM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "162833217391-mvg4h8bvmmfupg123pl137g0mv2st0ud.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
