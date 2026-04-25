@@ -80,7 +80,7 @@ class _DiseaseScannerScreenState extends State<DiseaseScannerScreen> with Single
         });
 
         try {
-          const String geminiKey = 'AIzaSyCGLvKvohePi86VRRCJgRHF9sIZGhnLTOg';
+          final String geminiKey = AppSettings.instance.geminiApiKey;
           final models = [
             'gemini-2.5-flash',
             'gemini-2.5-pro',

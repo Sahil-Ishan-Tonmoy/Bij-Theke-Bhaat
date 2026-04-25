@@ -40,7 +40,7 @@ class _SoilHealthScreenState extends State<SoilHealthScreen> {
     final cached = prefs.getString(cacheKey);
     if (cached != null) return cached;
 
-    const String geminiKey = 'AIzaSyCGLvKvohePi86VRRCJgRHF9sIZGhnLTOg';
+    final String geminiKey = AppSettings.instance.geminiApiKey;
     final models = [
       'gemini-2.5-flash',
       'gemini-2.5-pro',

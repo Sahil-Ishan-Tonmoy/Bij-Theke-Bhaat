@@ -49,6 +49,7 @@ dependencies:
   google_generative_ai: ^0.4.7
   image_picker: ^1.2.1
   fl_chart: ^0.70.2
+  flutter_dotenv: ^5.1.0
   shared_preferences: ^2.5.5
   translator: ^1.0.0
 
@@ -77,6 +78,7 @@ flutter:
 
   assets:
     - assets/logo.png
+    - .env
 
   # To add assets to your application, add an assets section, like this:
   # assets:

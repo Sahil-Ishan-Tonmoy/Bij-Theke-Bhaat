@@ -5,9 +5,26 @@ import 'translations.dart';
 
 /// Global app settings — language, theme, land unit.
 /// Uses ValueNotifier so any widget can listen with ValueListenableBuilder.
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+
 class AppSettings {
-  AppSettings._();
-  static final AppSettings instance = AppSettings._();
+  static final AppSettings instance = AppSettings._internal();
+  
+  AppSettings._internal();
+
+  bool isBengali = false;
+  bool isBigha = true;
+  
+  List<String> get _geminiKeys => dotenv.get('GEMINI_KEYS', fallback: '').split(',');
+  int _keyIndex = 0;
+
+  String get geminiApiKey {
+    final keys = _geminiKeys;
+    if (keys.isEmpty || keys[0].isEmpty) return '';
+    final key = keys[_keyIndex % keys.length];
+    _keyIndex++; // Rotate for next call
+    return key;
+  }
 
   final _translator = GoogleTranslator();
 
