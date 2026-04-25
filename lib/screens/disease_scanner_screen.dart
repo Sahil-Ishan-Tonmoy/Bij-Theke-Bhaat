@@ -81,13 +81,19 @@ class _DiseaseScannerScreenState extends State<DiseaseScannerScreen> with Single
 
         try {
           const String geminiKey = 'AIzaSyCGLvKvohePi86VRRCJgRHF9sIZGhnLTOg';
-          final models = ['gemini-2.5-flash', 'gemini-2.0-flash', 'gemini-2.5-flash-lite'];
+          final models = [
+            'gemini-2.5-flash',
+            'gemini-2.5-pro',
+            'gemini-2.0-flash',
+            'gemini-2.0-flash-lite',
+            'gemini-2.5-flash-lite'
+          ];
           final String base64Image = base64Encode(bytes);
           bool success = false;
 
           for (var modelName in models) {
             try {
-              final String url = 'https://generativelanguage.googleapis.com/v1/models/$modelName:generateContent?key=$geminiKey';
+              final String url = 'https://generativelanguage.googleapis.com/v1beta/models/$modelName:generateContent?key=$geminiKey';
               
               final Map<String, dynamic> requestBody = {
                 "contents": [{
@@ -118,7 +124,6 @@ class _DiseaseScannerScreenState extends State<DiseaseScannerScreen> with Single
                 final String? text = data['candidates']?[0]?['content']?['parts']?[0]?['text'];
                 
                 if (text != null && text.isNotEmpty) {
-                  // Extract JSON from potentially markdown-wrapped response
                   String cleanJson = text;
                   if (text.contains('```json')) {
                     cleanJson = text.split('```json')[1].split('```')[0].trim();
@@ -135,23 +140,25 @@ class _DiseaseScannerScreenState extends State<DiseaseScannerScreen> with Single
                      await _logToHistoryAndNotifyWithData(_detectedDisease, _recommendedTreatment, _confidenceScore);
                   }
                   success = true;
-                  break; // Exit model loop
+                  break; 
                 }
               }
             } catch (e) {
-              debugPrint("Model $modelName failed: $e");
-              continue; // Try next model
+              continue;
             }
           }
 
           if (!success) {
             _detectedDisease = "AI Analysis Unavailable";
             _confidenceScore = 0.0;
+            _recommendedTreatment = AppSettings.instance.isBengali 
+                ? "বর্তমানে এআই কোটা পূর্ণ হয়েছে। সাধারণ পরামর্শ: জমি পরিষ্কার রাখুন এবং সঠিক নিষ্কাশন ব্যবস্থা নিশ্চিত করুন। বিস্তারিত স্ক্যানের জন্য পরে আবার চেষ্টা করুন।"
+                : "AI Quota reached. General Advice: Keep the field clean and ensure proper drainage. Try again later for a detailed scan.";
           }
         } catch(e) {
-          debugPrint("Gemini Exception: $e");
           _detectedDisease = "Connection Failed";
           _confidenceScore = 0.0;
+          _recommendedTreatment = "Check your internet connection and try again.";
         }
         
         if (mounted) {

@@ -43,8 +43,10 @@ class _SoilHealthScreenState extends State<SoilHealthScreen> {
     const String geminiKey = 'AIzaSyCGLvKvohePi86VRRCJgRHF9sIZGhnLTOg';
     final models = [
       'gemini-2.5-flash',
+      'gemini-2.5-pro',
       'gemini-2.0-flash',
-      'gemini-2.5-flash-lite',
+      'gemini-2.0-flash-lite',
+      'gemini-2.5-flash-lite'
     ];
 
     final prompt =
@@ -56,7 +58,7 @@ class _SoilHealthScreenState extends State<SoilHealthScreen> {
     for (var modelName in models) {
       try {
         final String url =
-            'https://generativelanguage.googleapis.com/v1/models/$modelName:generateContent?key=$geminiKey';
+            'https://generativelanguage.googleapis.com/v1beta/models/$modelName:generateContent?key=$geminiKey';
 
         final Map<String, dynamic> requestBody = {
           "contents": [
@@ -84,20 +86,19 @@ class _SoilHealthScreenState extends State<SoilHealthScreen> {
             await prefs.setString(cacheKey, advice);
             return advice;
           }
-        } else if (response.statusCode == 429) {
-          continue; // Try next model
-        } else {
-          // Other error, maybe try next model anyway
-          continue;
         }
       } catch (e) {
-        continue; // Error with this model, try next
+        continue; 
       }
     }
 
+    // FINAL FALLBACK: Local Expert Logic if AI is exhausted
+    final analysis = _analyzeSoil(ph, n, m);
+    final topAdvice = analysis.suggestions.isNotEmpty ? analysis.suggestions.first.advice : '';
+    
     return AppSettings.instance.isBengali
-        ? 'এআই পরামর্শ এখন পাওয়া যাচ্ছে না। অনুগ্রহ করে কিছুক্ষণ পর চেষ্টা করুন।'
-        : 'AI advice temporarily unavailable due to high demand.';
+        ? 'বর্তমানে এআই কোটা পূর্ণ হয়েছে। আপনার জন্য স্ট্যান্ডার্ড পরামর্শ: $topAdvice'
+        : 'AI Quota reached for today. Standard Expert Advice: $topAdvice';
   }
 
   @override
