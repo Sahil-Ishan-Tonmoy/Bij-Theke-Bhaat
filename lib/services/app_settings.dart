@@ -12,9 +12,6 @@ class AppSettings {
   
   AppSettings._internal();
 
-  bool isBengali = false;
-  bool isBigha = true;
-  
   List<String> get _geminiKeys => dotenv.get('GEMINI_KEYS', fallback: '').split(',');
   int _keyIndex = 0;
 
