@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import '../services/app_colors.dart';
+import '../services/app_settings.dart';
+import '../widgets/theme_aware.dart';
+import '../widgets/app_menu_button.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -18,7 +22,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   
   bool _isLoading = true;
   bool _isSaving = false;
-  bool _isEditing = false; // New state added for read-only vs edit mode
+  bool _isEditing = false; 
 
   @override
   void initState() {
@@ -69,8 +73,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
       builder: (context, child) {
         return Theme(
           data: Theme.of(context).copyWith(
-            colorScheme: const ColorScheme.light(
-              primary: Color(0xFF2D5A27),
+            colorScheme: ColorScheme.light(
+              primary: AppColors.accent,
+              onPrimary: Colors.white,
+              onSurface: AppColors.primaryText,
             ),
           ),
           child: child!,
@@ -83,13 +89,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Future<void> _saveProfile() async {
+    final s = AppSettings.instance;
     final name = _nameController.text.trim();
     if (name.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Name cannot be empty')));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(s.isBengali ? 'নাম খালি রাখা যাবে না' : 'Name cannot be empty')));
       return;
     }
     if (_selectedBirthDate == null) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Birth date cannot be empty')));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(s.isBengali ? 'জন্ম তারিখ নির্বাচন করুন' : 'Birth date cannot be empty')));
       return;
     }
 
@@ -108,7 +115,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         
         if (mounted) {
           setState(() => _isEditing = false); 
-          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Profile updated successfully!')));
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(s.isBengali ? 'প্রোফাইল সফলভাবে আপডেট করা হয়েছে!' : 'Profile updated successfully!')));
         }
       }
     } catch (e) {
@@ -124,130 +131,191 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final s = AppSettings.instance;
     return Scaffold(
+      extendBodyBehindAppBar: true,
       appBar: AppBar(
-        title: const Text('My Profile'),
+        title: Text(s.translate('profile'), style: TextStyle(fontWeight: FontWeight.bold, color: AppColors.appBarText)),
+        backgroundColor: AppColors.appBarBg,
+        elevation: 0,
+        iconTheme: IconThemeData(color: AppColors.appBarText),
         actions: [
           if (!_isEditing && !_isLoading)
             IconButton(
               icon: const Icon(Icons.edit_rounded),
-              tooltip: 'Edit Profile',
+              tooltip: s.translate('edit_profile'),
               onPressed: () => setState(() => _isEditing = true),
             ),
           if (_isEditing && !_isLoading)
             IconButton(
               icon: const Icon(Icons.close_rounded),
-              tooltip: 'Cancel Edits',
+              tooltip: s.isBengali ? 'বাতিল করুন' : 'Cancel Edits',
               onPressed: () {
                 setState(() => _isEditing = false);
               },
             ),
+          const AppMenuButton(),
         ],
       ),
-      body: _isLoading 
-        ? const Center(child: CircularProgressIndicator())
-        : Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 32.0),
-            child: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Center(
-                    child: Container(
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.08),
-                            blurRadius: 20,
-                            spreadRadius: 2,
-                            offset: const Offset(0, 8),
-                          )
-                        ],
-                      ),
-                      child: const CircleAvatar(
-                        radius: 50,
-                        backgroundColor: Color(0xFF2D5A27),
-                        child: Icon(Icons.person_rounded, size: 55, color: Colors.white),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 48),
-                  
-                  TextField(
-                    controller: _nameController,
-                    readOnly: !_isEditing,
-                    // Inherits filled, color, and borderRadius from global Theme in main.dart
-                    decoration: const InputDecoration(
-                      labelText: 'Full Name',
-                      prefixIcon: Icon(Icons.person_outline_rounded, color: Color(0xFF2D5A27)),
-                    ),
-                    textCapitalization: TextCapitalization.words,
-                    style: TextStyle(
-                      color: _isEditing ? Colors.black87 : Colors.black54,
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  
-                  DropdownButtonFormField<String>(
-                    value: _selectedGender,
-                    decoration: const InputDecoration(
-                      labelText: 'Gender',
-                      prefixIcon: Icon(Icons.wc_rounded, color: Color(0xFF2D5A27)),
-                    ),
-                    items: const [
-                      DropdownMenuItem(value: 'Male', child: Text('Male')),
-                      DropdownMenuItem(value: 'Female', child: Text('Female')),
-                      DropdownMenuItem(value: 'Other', child: Text('Other')),
-                    ],
-                    onChanged: _isEditing ? (val) {
-                      if (val != null) setState(() => _selectedGender = val);
-                    } : null,
-                  ),
-                  const SizedBox(height: 20),
+      body: ThemeAware(
+        builder: (context) => Container(
+          decoration: BoxDecoration(
+            gradient: AppColors.backgroundGradient,
+          ),
+          child: SafeArea(
+            child: _isLoading 
+              ? Center(child: CircularProgressIndicator(color: AppColors.accent))
+              : LayoutBuilder(
+                  builder: (context, constraints) {
+                    return SingleChildScrollView(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 24.0),
+                      child: ConstrainedBox(
+                        constraints: BoxConstraints(minHeight: constraints.maxHeight - 48),
+                        child: IntrinsicHeight(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              const SizedBox(height: 20),
+                              Center(
+                                child: Stack(
+                                  children: [
+                                    Container(
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: AppColors.accent.withOpacity(0.2),
+                                            blurRadius: 30,
+                                            spreadRadius: 5,
+                                          )
+                                        ],
+                                      ),
+                                      child: CircleAvatar(
+                                        radius: 60,
+                                        backgroundColor: AppColors.accent,
+                                        child: const Icon(Icons.person_rounded, size: 70, color: Colors.white),
+                                      ),
+                                    ),
+                                    if (_isEditing)
+                                      Positioned(
+                                        bottom: 0,
+                                        right: 0,
+                                        child: Container(
+                                          padding: const EdgeInsets.all(8),
+                                          decoration: BoxDecoration(color: AppColors.accentLight, shape: BoxShape.circle),
+                                          child: const Icon(Icons.camera_alt_rounded, size: 20, color: Colors.white),
+                                        ),
+                                      ),
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(height: 40),
+                              
+                              TextField(
+                                controller: _nameController,
+                                readOnly: !_isEditing,
+                                style: TextStyle(
+                                  color: _isEditing ? AppColors.primaryText : AppColors.secondaryText,
+                                ),
+                                decoration: InputDecoration(
+                                  labelText: s.translate('full_name'),
+                                  labelStyle: TextStyle(color: AppColors.secondaryText),
+                                  prefixIcon: Icon(Icons.person_outline_rounded, color: AppColors.accent),
+                                  filled: true, fillColor: AppColors.inputFill,
+                                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide.none),
+                                ),
+                                textCapitalization: TextCapitalization.words,
+                              ),
+                              const SizedBox(height: 16),
+                              
+                              DropdownButtonFormField<String>(
+                                value: _selectedGender,
+                                dropdownColor: AppColors.scaffoldBg,
+                                style: TextStyle(color: _isEditing ? AppColors.primaryText : AppColors.secondaryText),
+                                decoration: InputDecoration(
+                                  labelText: s.translate('gender'),
+                                  labelStyle: TextStyle(color: AppColors.secondaryText),
+                                  prefixIcon: Icon(Icons.wc_rounded, color: AppColors.accent),
+                                  filled: true, fillColor: AppColors.inputFill,
+                                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide.none),
+                                ),
+                                items: [
+                                  DropdownMenuItem(value: 'Male', child: Text(s.isBengali ? 'পুরুষ' : 'Male')),
+                                  DropdownMenuItem(value: 'Female', child: Text(s.isBengali ? 'মহিলা' : 'Female')),
+                                  DropdownMenuItem(value: 'Other', child: Text(s.isBengali ? 'অন্যান্য' : 'Other')),
+                                ],
+                                onChanged: _isEditing ? (val) {
+                                  if (val != null) setState(() => _selectedGender = val);
+                                } : null,
+                              ),
+                              const SizedBox(height: 16),
 
-                  InkWell(
-                    onTap: _isEditing ? _pickBirthDate : null,
-                    child: InputDecorator(
-                      decoration: const InputDecoration(
-                        labelText: 'Birth Date',
-                        prefixIcon: Icon(Icons.cake_outlined, color: Color(0xFF2D5A27)),
-                        suffixIcon: Icon(Icons.calendar_today_rounded, color: Color(0xFF2D5A27)),
-                      ),
-                      child: Text(
-                        _selectedBirthDate == null
-                            ? 'Select a date...'
-                            : _selectedBirthDate!.toString().substring(0, 10),
-                        style: TextStyle(
-                          fontSize: 16, 
-                          color: _isEditing ? Colors.black87 : Colors.black54,
+                              InkWell(
+                                onTap: _isEditing ? _pickBirthDate : null,
+                                child: InputDecorator(
+                                  decoration: InputDecoration(
+                                    labelText: s.translate('birth_date'),
+                                    labelStyle: TextStyle(color: AppColors.secondaryText),
+                                    prefixIcon: Icon(Icons.cake_outlined, color: AppColors.accent),
+                                    suffixIcon: Icon(Icons.calendar_today_rounded, color: AppColors.accent),
+                                    filled: true, fillColor: AppColors.inputFill,
+                                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide.none),
+                                  ),
+                                  child: Text(
+                                    _selectedBirthDate == null
+                                        ? (s.isBengali ? 'তারিখ নির্বাচন করুন...' : 'Select a date...')
+                                        : s.translatePrice(_selectedBirthDate!.toString().substring(0, 10)),
+                                    style: TextStyle(
+                                      fontSize: 16, 
+                                      color: _isEditing ? AppColors.primaryText : AppColors.secondaryText,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(height: 16),
+                              
+                              TextField(
+                                controller: _emailController,
+                                readOnly: true,
+                                style: TextStyle(color: AppColors.secondaryText),
+                                decoration: InputDecoration(
+                                  labelText: s.translate('email'), 
+                                  labelStyle: TextStyle(color: AppColors.secondaryText),
+                                  prefixIcon: Icon(Icons.email_outlined, color: AppColors.accent),
+                                  suffixIcon: const Icon(Icons.lock_rounded, color: Colors.grey, size: 20),
+                                  filled: true, fillColor: AppColors.inputFill,
+                                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide.none),
+                                ),
+                              ),
+                              
+                              const Spacer(),
+                              const SizedBox(height: 32),
+
+                              if (_isEditing)
+                                ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: AppColors.accent,
+                                    foregroundColor: Colors.white,
+                                    padding: const EdgeInsets.symmetric(vertical: 18),
+                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                                    elevation: 8,
+                                    shadowColor: AppColors.accent.withOpacity(0.4),
+                                  ),
+                                  onPressed: _isSaving ? null : _saveProfile,
+                                  child: _isSaving ? const CircularProgressIndicator(color: Colors.white) : Text(s.translate('save_changes'), style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16, letterSpacing: 1.2)),
+                                ),
+                              const SizedBox(height: 20),
+                            ],
+                          ),
                         ),
                       ),
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  
-                  TextField(
-                    controller: _emailController,
-                    readOnly: true,
-                    decoration: const InputDecoration(
-                      labelText: 'Email Address', 
-                      prefixIcon: Icon(Icons.email_outlined, color: Color(0xFF2D5A27)),
-                      suffixIcon: Icon(Icons.lock_rounded, color: Colors.grey, size: 20),
-                    ),
-                    style: const TextStyle(color: Colors.black54),
-                  ),
-                  const SizedBox(height: 48),
-
-                  if (_isEditing)
-                    ElevatedButton(
-                      onPressed: _isSaving ? null : _saveProfile,
-                      child: _isSaving ? const CircularProgressIndicator(color: Colors.white) : const Text('SAVE CHANGES'),
-                    ),
-                ],
-              ),
-            ),
+                    );
+                  }
+                ),
           ),
+        ),
+      ),
     );
   }
 
