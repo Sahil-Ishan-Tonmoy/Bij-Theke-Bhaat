@@ -151,49 +151,18 @@ erDiagram
 
 
 
----
-
-### **App Wireframe Flow:**
-
-```mermaid
-graph TD
-    A[Welcome Screen] -->|Auth| B[Login / Register]
-    B -->|Verified| C[Smart Dashboard]
-    
-    subgraph "AI Engines"
-    C --> D[AI Disease Scanner]
-    C --> E[Smart Soil Hub]
-    C --> F[Irrigation Scheduler]
-    end
-    
-    subgraph "Commercial Hub"
-    C --> G[P2P Marketplace]
-    G --> H[Add New Listing]
-    C --> I[Farm Ledger]
-    I --> J[Profit/Loss Analytics]
-    end
-    
-    subgraph "Management"
-    C --> K[Farming Calendar]
-    C --> L[Weather Forecast]
-    C --> M[User Profile & Settings]
-    end
-```
-
----
-
 ### **Online Resources used:**
 
 **a) Reference:**
 *   **W3schools.com**: Used for mastering advanced CSS Flexbox and Grid layouts to create the app’s modern glassmorphic UI.
-*   **Youtube**: 
-    *   **Tutorial 1**: [Flutter & Firebase Masterclass](https://www.youtube.com/watch?v=D4nhaszNW4o) - For Authentication and Firestore integration.
-    *   **Tutorial 2**: [Introduction to Gemini API for Flutter](https://www.youtube.com/watch?v=hB9iI7O7X1E) - Official Google link for implementing AI.
+*   **Youtube**:
+    *   **Link 1**: [Flutter & Firebase Masterclass](https://www.youtube.com/watch?v=D4nhaszNW4o) - For Authentication and Firestore integration.
+    *   **Link 2**: [Google Gemini AI in Flutter](https://www.youtube.com/watch?v=0ZS6n7d113g) - For implementing Generative AI features.
 *   **Open-Meteo Documentation**: For hyper-local weather API integration [open-meteo.com](https://open-meteo.com/).
 *   **Flutter.dev**: Official documentation for widget lifecycle and state management.
 
 **b) Stackoverflow or github links:**
-*   **StackOverflow**: [How to handle Android 13+ Notification Permissions](https://stackoverflow.com/questions/72310162/how-do-i-request-push-notification-permissions-for-android-13) - Key resource for notification permissions.
+*   **StackOverflow**: [How to handle Android 13+ Notification Permissions](https://stackoverflow.com/questions/72310162/how-do-i-request-push-notification-permissions-for-android-13) - Used for the Notification Service.
 *   **GitHub**: [flutter_dotenv repository](https://github.com/java-james/flutter_dotenv) - Used for implementing the secure .env system.
 *   **GitHub**: [google_generative_ai repository](https://github.com/google/generative-ai-dart) - Reference for the multi-model AI rotation logic.
 
