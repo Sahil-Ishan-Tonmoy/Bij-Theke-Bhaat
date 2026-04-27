@@ -1,0 +1,66 @@
+============================================================
+           AI USAGE DECLARATION
+============================================================
+
+Name: Sahil Ishan Tonmoy
+Student ID: 22301612
+Assignment: CSE 489 - Final Project
+Date: 25-Apr-2026
+
+------------------------------------------------------------
+1. AI TOOLS USED (check all that apply)
+------------------------------------------------------------
+[ ] None
+[ ] ChatGPT
+[ ] GitHub Copilot
+[x] Google Gemini
+[ ] Claude
+[ ] Cursor
+[ ] Other: ________________
+
+------------------------------------------------------------
+2. PURPOSE OF AI USE (check all that apply)
+------------------------------------------------------------
+[x] Learning/understanding concepts
+[x] Debugging my code
+[ ] Generating code snippets
+[ ] Writing text content
+[ ] Design/styling ideas
+[ ] Image generation
+[x] Other: Git/GitHub operations
+
+------------------------------------------------------------
+3. DESCRIPTION OF AI USE
+------------------------------------------------------------
+Briefly describe what you used AI for and how:
+
+I independently researched the Android/Flutter ecosystem and developed the 
+UI architecture and offline processing strategy for this application. I primarily 
+used AI to help me quickly resolve tedious compilation errors regarding the 
+Flutter Dio package (multipart/form-data rules) and to clarify some of the 
+complex runtime permission checks required by the Geolocator package. It also 
+helped spot a bug where my Google Maps marker icons were failing to visually 
+update when scores changed dynamically. Finally, I utilized AI to automate 
+and format my final Git commits, branch merging, and pushing to GitHub to 
+ensure the repository cleanly adhered to the submission structure.
+
+------------------------------------------------------------
+4. AI-ASSISTED SECTIONS
+------------------------------------------------------------
+List specific files/sections where AI helped significantly:
+
+File: lib/services/api_service.dart   Section: Dio FormData configuration
+File: lib/screens/map_screen.dart     Section: Marker ID dynamic refresh fix
+File: lib/models/landmark.dart        Section: Try-Catch JSON parsing fallbacks
+
+------------------------------------------------------------
+5. DECLARATION
+------------------------------------------------------------
+I declare that:
+- This disclosure is complete and accurate
+- I understand all code in my submission
+- I can explain and modify my work if asked
+- I take full responsibility for my submission
+
+Signature: ___Sahil Ishan Tonmoy___
+Date: 15-Apr-2026
